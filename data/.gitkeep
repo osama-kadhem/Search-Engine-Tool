@@ -1,0 +1,2 @@
+# Data directory — stores the saved inverted index
+# This directory is intentionally kept; index.json is gitignored.
