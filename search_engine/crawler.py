@@ -20,9 +20,10 @@ CRAWL_DELAY = 6  # seconds - required by the coursework brief
 class Crawler:
     """Crawls quotes.toscrape.com and returns a list of page data dicts."""
 
-    def __init__(self, base_url=BASE_URL, delay=CRAWL_DELAY):
+    def __init__(self, base_url=BASE_URL, delay=CRAWL_DELAY, max_pages=None):
         self.base_url = base_url
         self.delay = delay
+        self.max_pages = max_pages  # set a limit during testing to avoid long crawls
         self._visited = set()
         self._session = requests.Session()
         self._session.headers.update(
@@ -39,6 +40,11 @@ class Crawler:
         pages = []
 
         while queue:
+            # Stop early if we have reached the page limit
+            if self.max_pages and len(pages) >= self.max_pages:
+                logger.info("Reached max_pages limit (%d). Stopping.", self.max_pages)
+                break
+
             url = queue.pop(0)
             normalised = self._normalise(url)
 
