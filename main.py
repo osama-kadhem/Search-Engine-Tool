@@ -1,13 +1,11 @@
-"""
-COMP3011 Coursework 2 - Search Engine Tool
-CLI entry point. Run with --help to see available commands.
-
-Usage:
-  python3 main.py build [--start-url URL] [--output data/index.json]
-  python3 main.py load  [--index data/index.json]
-  python3 main.py print [--index data/index.json]
-  python3 main.py find  <query> [--index data/index.json] [--top-n 10]
-"""
+# CLI entry point for the COMP3011 Search Engine.
+# Run `python main.py --help` to see all available commands.
+#
+# Usage:
+#   python main.py build [--start-url URL] [--output data/index.json]
+#   python main.py load  [--index data/index.json]
+#   python main.py print [--index data/index.json]
+#   python main.py find  <query> [--index data/index.json] [--top-n 10]
 
 import argparse
 import logging
@@ -33,7 +31,7 @@ def cmd_build(args):
     logger.info("Starting crawl from: %s", args.start_url)
     crawler = Crawler(base_url=args.start_url)
     pages = crawler.crawl()
-    logger.info("Crawl complete - %d pages collected.", len(pages))
+    logger.info("Crawl complete — %d pages collected.", len(pages))
 
     indexer = Indexer()
     indexer.build(pages)
@@ -42,7 +40,7 @@ def cmd_build(args):
 
 
 def cmd_load(args):
-    """Load a previously saved index from disk."""
+    """Load a previously saved index and confirm it worked."""
     from search_engine.indexer import Indexer
 
     indexer = Indexer()
@@ -51,19 +49,17 @@ def cmd_load(args):
 
 
 def cmd_print(args):
-    """Print every document stored in the index."""
+    """Load the index and print every document as a table."""
     from search_engine.indexer import Indexer
     from search_engine.searcher import Searcher
 
     indexer = Indexer()
     indexer.load(args.index)
-
-    searcher = Searcher(indexer)
-    searcher.print_all()
+    Searcher(indexer).print_all()
 
 
 def cmd_find(args):
-    """Search the index and display ranked results."""
+    """Load the index, run a search, and display ranked results."""
     from search_engine.indexer import Indexer
     from search_engine.searcher import Searcher
 
@@ -71,8 +67,7 @@ def cmd_find(args):
     indexer = Indexer()
     indexer.load(args.index)
 
-    searcher = Searcher(indexer)
-    results = searcher.find(args.query, top_n=args.top_n)
+    results = Searcher(indexer).find(args.query, top_n=args.top_n)
 
     if not results:
         print("No results found.")
@@ -88,10 +83,10 @@ def cmd_find(args):
 
 
 def build_parser():
-    """Set up the argument parser with all four subcommands."""
+    """Define all CLI subcommands and their arguments."""
     parser = argparse.ArgumentParser(
         prog="search_tool",
-        description="COMP3011 CW2 - Search Engine for quotes.toscrape.com",
+        description="COMP3011 CW2 — Search Engine for quotes.toscrape.com",
     )
     parser.add_argument(
         "--verbose", "-v",
@@ -102,7 +97,7 @@ def build_parser():
     subparsers = parser.add_subparsers(dest="command", metavar="COMMAND")
     subparsers.required = True
 
-    # build: crawl and save
+    # build: crawl the site and save the index
     p_build = subparsers.add_parser("build", help="Crawl the site and build the index.")
     p_build.add_argument("--start-url", default=DEFAULT_START_URL, metavar="URL",
                          help=f"Where to start crawling (default: {DEFAULT_START_URL})")
@@ -110,7 +105,7 @@ def build_parser():
                          help=f"Where to save the index (default: {DEFAULT_INDEX})")
     p_build.set_defaults(func=cmd_build)
 
-    # load: read a saved index
+    # load: read a saved index from disk
     p_load = subparsers.add_parser("load", help="Load a saved index from disk.")
     p_load.add_argument("--index", default=DEFAULT_INDEX, metavar="FILE",
                         help=f"Path to the index file (default: {DEFAULT_INDEX})")
@@ -143,13 +138,14 @@ def main():
 
     try:
         args.func(args)
-    except NotImplementedError as exc:
-        logger.error("Not implemented yet: %s", exc)
+    except FileNotFoundError as exc:
+        # Give the user a clear message instead of a raw traceback
+        logger.error("%s", exc)
         sys.exit(1)
     except KeyboardInterrupt:
         print("\nInterrupted.")
         sys.exit(0)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

@@ -1,6 +1,4 @@
-"""
-Searcher - runs TF-IDF ranked search over the inverted index.
-"""
+# Ranks documents against a search query using TF-IDF scoring.
 
 import math
 import logging
@@ -11,23 +9,25 @@ from nltk.stem import PorterStemmer
 
 logger = logging.getLogger(__name__)
 
+# Same settings as the indexer — must match or scores will be wrong
 STOP_WORDS = set(stopwords.words("english"))
 stemmer = PorterStemmer()
 
 
 class Searcher:
-    """Performs ranked search over a built Indexer."""
+    """Searches a built Indexer and returns ranked results."""
 
     def __init__(self, indexer):
         self.indexer = indexer
-        # Pre-compute each document's total term count once to avoid repeating
-        # the scan inside the scoring loop for every query token.
+
+        # Sum up how many tokens each document contains.
+        # We do this once here so the find() loop doesn't re-scan on every query.
         self._doc_lengths = {}
         for (doc_id, _), count in indexer.term_freq.items():
             self._doc_lengths[doc_id] = self._doc_lengths.get(doc_id, 0) + count
 
     def find(self, query, top_n=10):
-        """Return the top N documents ranked by TF-IDF score for the given query."""
+        """Return the top N documents for the query, ranked by TF-IDF score."""
         query_tokens = self._preprocess(query)
 
         if not query_tokens:
@@ -36,22 +36,22 @@ class Searcher:
         scores = {}
         n_docs = len(self.indexer.documents)
 
-        for token in set(query_tokens):  # deduplicate so repeated words don't inflate scores
+        # Score each document that contains at least one query token
+        for token in set(query_tokens):  # use set so repeated words don't double-count
             posting = self.indexer.index.get(token, [])
             if not posting:
                 continue
 
-            # IDF: how rare the term is across all documents
+            # IDF tells us how rare (and therefore valuable) this term is
             idf = math.log((n_docs + 1) / (len(posting) + 1)) + 1
 
             for doc_id in posting:
                 tf = self.indexer.term_freq.get((doc_id, token), 0)
-                # Normalise TF by document length to avoid bias toward long docs
+                # Divide TF by doc length so long documents don't score unfairly
                 doc_len = self._doc_lengths.get(doc_id, 1)
-                tf_normalised = tf / doc_len
-                scores[doc_id] = scores.get(doc_id, 0.0) + tf_normalised * idf
+                scores[doc_id] = scores.get(doc_id, 0.0) + (tf / doc_len) * idf
 
-        # Sort by score descending and take top N
+        # Sort highest score first and keep only the top N
         ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:top_n]
 
         results = []
@@ -67,7 +67,7 @@ class Searcher:
         return results
 
     def print_all(self):
-        """Print every document in the index with its metadata."""
+        """Print every document in the index as a simple table."""
         docs = self.indexer.documents
 
         if not docs:
@@ -80,7 +80,7 @@ class Searcher:
             print(f"{doc_id:<5} {doc.title[:40]:<40} {doc.url}")
 
     def _preprocess(self, text):
-        """Apply the same pipeline as the indexer: lowercase, stop words, stemming."""
+        """Apply the same cleaning pipeline as the indexer."""
         tokens = word_tokenize(text.lower())
         return [
             stemmer.stem(w)
@@ -90,18 +90,17 @@ class Searcher:
 
     def _snippet(self, doc, query_tokens, window=10):
         """
-        Extract a short snippet from the document text around the first query match.
-        Falls back to the first few words if no match is found.
+        Find the first query word in the document and return the words around it.
+        Falls back to the opening words if nothing matches.
         """
         words = doc.full_text().split()
-        stemmed_words = [stemmer.stem(w.lower()) for w in words]
+        stemmed = [stemmer.stem(w.lower()) for w in words]
 
-        # Find the first position where a query token appears
-        for i, stem in enumerate(stemmed_words):
+        for i, stem in enumerate(stemmed):
             if stem in query_tokens:
                 start = max(0, i - window // 2)
                 end = min(len(words), i + window // 2 + 1)
                 return " ".join(words[start:end])
 
-        # No match found — return the beginning of the text
+        # No match — just show the start of the document
         return " ".join(words[:window])
