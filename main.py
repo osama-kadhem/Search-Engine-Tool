@@ -58,7 +58,7 @@ def cmd_print(args):
     indexer = Indexer()
     indexer.load(args.index)
 
-    searcher = Searcher()
+    searcher = Searcher(indexer)
     searcher.print_all()
 
 
@@ -71,7 +71,7 @@ def cmd_find(args):
     indexer = Indexer()
     indexer.load(args.index)
 
-    searcher = Searcher()
+    searcher = Searcher(indexer)
     results = searcher.find(args.query, top_n=args.top_n)
 
     if not results:
