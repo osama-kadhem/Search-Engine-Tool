@@ -1,7 +1,5 @@
-"""
-Tests for search_engine/crawler.py.
-All HTTP calls are mocked so no real network requests are made.
-"""
+# Tests for crawler.py
+# HTTP calls are mocked to avoid real network requests.
 
 from unittest.mock import MagicMock, patch
 import pytest
@@ -35,7 +33,7 @@ PAGE2_HTML = """
 
 
 def _make_response(html, url="https://quotes.toscrape.com"):
-    """Helper: build a mock requests.Response."""
+    # Build a mock requests.Response
     resp = MagicMock()
     resp.text = html
     resp.url = url
@@ -47,7 +45,7 @@ def _make_response(html, url="https://quotes.toscrape.com"):
 class TestCrawlerBasics:
 
     def test_crawl_returns_list(self, mock_sleep):
-        """crawl() should return a list of page dicts."""
+        # We expect a list of page dicts
         crawler = Crawler(delay=0, max_pages=1)
         crawler._session.get = MagicMock(
             return_value=_make_response(HOME_HTML)
@@ -57,7 +55,7 @@ class TestCrawlerBasics:
         assert len(pages) == 1
 
     def test_page_has_required_fields(self, mock_sleep):
-        """Each page dict must contain url, title, quotes, authors, tags."""
+        # Must contain url, title, quotes, authors, tags
         crawler = Crawler(delay=0, max_pages=1)
         crawler._session.get = MagicMock(
             return_value=_make_response(HOME_HTML)
@@ -68,7 +66,7 @@ class TestCrawlerBasics:
             assert field in page, f"Missing field: {field}"
 
     def test_private_links_field_is_removed(self, mock_sleep):
-        """The internal _links field must be stripped from returned pages."""
+        # Hide internal _links from caller
         crawler = Crawler(delay=0, max_pages=1)
         crawler._session.get = MagicMock(
             return_value=_make_response(HOME_HTML)
@@ -114,7 +112,6 @@ class TestCrawlerBasics:
 class TestCrawlerLimits:
 
     def test_max_pages_is_respected(self, mock_sleep):
-        """Crawler must stop once max_pages is reached."""
         responses = [
             _make_response(HOME_HTML, "https://quotes.toscrape.com"),
             _make_response(PAGE2_HTML, "https://quotes.toscrape.com/page/2"),
@@ -125,9 +122,8 @@ class TestCrawlerLimits:
         assert len(pages) == 1
 
     def test_already_visited_urls_are_skipped(self, mock_sleep):
-        """The same URL should only be crawled once even if queued twice."""
-        # Page A links to B and C; Page B also links to C, so C enters the queue twice.
-        # When the crawler pops C the second time it should hit `continue`.
+        # Page A links to B and C; Page B also links to C. C enters queue twice.
+        # Second pop should just `continue`.
         page_a = """
         <html><head><title>A</title></head><body>
           <a href="/b/">B</a>
@@ -160,7 +156,7 @@ class TestCrawlerLimits:
 
 
     def test_sleep_is_called_between_pages(self, mock_sleep):
-        """time.sleep must be called at least once when more than one page is crawled."""
+        # Must delay before second request
         responses = [
             _make_response(HOME_HTML, "https://quotes.toscrape.com"),
             _make_response(PAGE2_HTML, "https://quotes.toscrape.com/page/2"),
@@ -175,7 +171,7 @@ class TestCrawlerLimits:
 class TestCrawlerErrorHandling:
 
     def test_failed_request_is_skipped(self, mock_sleep):
-        """A page that raises RequestException should be skipped gracefully."""
+        # Timeout shouldn't crash the script
         import requests as req_lib
 
         crawler = Crawler(delay=0, max_pages=1)
@@ -186,7 +182,7 @@ class TestCrawlerErrorHandling:
         assert pages == []
 
     def test_external_links_are_not_followed(self, mock_sleep):
-        """Links pointing to other domains must not be queued."""
+        # Ignore out-of-domain links
         html_with_external = """
         <html><head><title>X</title></head><body>
           <a href="https://example.com/page">external</a>

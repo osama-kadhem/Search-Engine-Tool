@@ -74,4 +74,4 @@ The following log details specific interactions where AI played an integral role
 ---
 
 ## Final Verification
-I have cross-checked the final codebase with the coursework marking criteria. The design decisions, such as the 6-second crawl delay, the specific pre-processing pipeline, and the TF-IDF ranking system, were all implemented to satisfy the academic requirements for COMP3011 while demonstrating the effective use of Generative AI.
+I have cross checked the final codebase with the coursework marking criteria. The design decisions, such as the 6-second crawl delay, the specific pre-processing pipeline, and the TF-IDF ranking system, were all implemented to satisfy the academic requirements for COMP3011 while demonstrating the effective use of Generative AI.

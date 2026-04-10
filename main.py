@@ -7,6 +7,18 @@
 #   python main.py print [--index data/index.json]
 #   python main.py find  <query> [--index data/index.json] [--top-n 10]
 
+# Just mention/explain build, then run these live:
+#python3 main.py load
+#python3 main.py print
+#python3 main.py find "love life"
+#python3 main.py find "the is and"
+#python3 main.py find "xylophone123"
+
+#python3 -m pytest --cov=search_engine --cov-report=term-missing
+
+
+
+
 import argparse
 import logging
 import sys

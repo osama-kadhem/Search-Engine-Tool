@@ -1,7 +1,4 @@
-"""
-Tests for search_engine/searcher.py.
-Builds a small in-memory Indexer and exercises the Searcher on top of it.
-"""
+# Tests for searcher.py
 
 import io
 import pytest
@@ -94,12 +91,10 @@ class TestSearcherFind:
         assert any("quotes.toscrape.com" in r["url"] for r in results)
 
     def test_multiword_query(self, searcher):
-        """A multi-word query should return results as long as any token matches."""
         results = searcher.find("world travel")
         assert len(results) > 0
 
     def test_relevant_doc_ranks_higher(self, searcher):
-        """The page about 'life' should outscore a page that doesn't mention it."""
         results = searcher.find("life planning")
         top_url = results[0]["url"]
         assert "page/2" in top_url
@@ -140,7 +135,6 @@ class TestSearcherSnippet:
         assert len(snippet) > 0
 
     def test_snippet_fallback_when_query_not_in_text(self):
-        """When no query token appears in the document, return the opening words."""
         # Build an indexer with a page that contains 'apple' but search for 'zzz'
         # so the stemmed loop never matches and we hit the fallback return.
         pages = [{

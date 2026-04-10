@@ -1,7 +1,4 @@
-"""
-Tests for search_engine/indexer.py.
-Covers Document, Indexer.build, Indexer.save, and Indexer.load.
-"""
+# Tests for indexer.py
 
 import json
 import os
@@ -15,7 +12,6 @@ from search_engine.indexer import Document, Indexer
 class TestDocument:
 
     def test_full_text_combines_all_fields(self):
-        """full_text() should join title, quotes, authors, and tags."""
         doc = Document(
             doc_id=0,
             url="https://example.com",
@@ -31,7 +27,6 @@ class TestDocument:
         assert "wisdom" in text
 
     def test_full_text_handles_empty_lists(self):
-        """full_text() should not crash when lists are empty."""
         doc = Document(
             doc_id=1, url="", title="Only Title",
             quotes=[], authors=[], tags=[]
@@ -72,7 +67,6 @@ class TestIndexerBuild:
         assert set(indexer.documents.keys()) == {0, 1}
 
     def test_index_contains_stemmed_tokens(self):
-        """The inverted index keys should be stemmed tokens."""
         indexer = Indexer()
         indexer.build(SAMPLE_PAGES)
         # 'world' stems to 'world', it must appear in the index
@@ -81,7 +75,6 @@ class TestIndexerBuild:
         )
 
     def test_index_maps_token_to_doc_id(self):
-        """A token from page 0 should map to doc_id 0."""
         indexer = Indexer()
         indexer.build(SAMPLE_PAGES)
         # The stemmed form of 'augustin' or similar should map to doc 0
@@ -102,14 +95,12 @@ class TestIndexerBuild:
             assert len(key) == 2
 
     def test_build_on_empty_list(self):
-        """Building from no pages should produce an empty index."""
         indexer = Indexer()
         indexer.build([])
         assert indexer.documents == {}
         assert indexer.index == {}
 
     def test_missing_fields_default_to_empty(self):
-        """Pages that omit optional fields should not crash the indexer."""
         pages = [{"url": "https://example.com"}]
         indexer = Indexer()
         indexer.build(pages)  # should not raise
@@ -170,7 +161,7 @@ class TestIndexerSaveLoad:
         assert len(indexer2.term_freq) == len(indexer.term_freq)
 
     def test_load_doc_ids_are_ints(self, tmp_path):
-        """After load, document keys must be ints, not strings (JSON artefact)."""
+        # JSON artefact encodes keys as strings, we want ints
         path = str(tmp_path / "index.json")
         indexer = Indexer()
         indexer.build(SAMPLE_PAGES)
@@ -187,7 +178,6 @@ class TestIndexerSaveLoad:
             indexer.load(str(tmp_path / "nonexistent.json"))
 
     def test_save_creates_parent_dirs(self, tmp_path):
-        """save() must create intermediate directories automatically."""
         path = str(tmp_path / "nested" / "dir" / "index.json")
         indexer = Indexer()
         indexer.build(SAMPLE_PAGES)

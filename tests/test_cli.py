@@ -1,7 +1,4 @@
-"""
-Tests for the CLI (main.py).
-Uses subprocess / argparse to test command routing without a real index.
-"""
+# Tests for CLI commands
 
 import json
 import os
@@ -96,7 +93,6 @@ class TestBuildParser:
 class TestCmdBuild:
 
     def test_build_crawls_and_saves(self):
-        """cmd_build should create a crawler, run it, build the index, and save."""
         args = MagicMock()
         args.start_url = "https://quotes.toscrape.com"
         args.output = "/tmp/test_build_output.json"
@@ -127,7 +123,6 @@ class TestCmdBuild:
 class TestCmdLoad:
 
     def test_load_calls_indexer_load(self, tmp_path):
-        """cmd_load should call indexer.load with the correct path."""
         from search_engine.indexer import Indexer
         path = str(tmp_path / "index.json")
         idx = Indexer()
@@ -246,7 +241,6 @@ class TestCmdFind:
 class TestMain:
 
     def test_main_verbose_sets_debug_level(self):
-        """Passing --verbose should switch the root logger to DEBUG."""
         with patch("sys.argv", ["search_tool", "--verbose", "find", "love"]), \
              patch("search_engine.indexer.Indexer") as MockIdx, \
              patch("search_engine.searcher.Searcher") as MockSearch:
@@ -261,7 +255,6 @@ class TestMain:
             assert logging.getLogger().level == logging.DEBUG
 
     def test_main_file_not_found_exits_with_code_1(self):
-        """A FileNotFoundError from cmd_load should print an error and exit 1."""
         with patch("sys.argv", ["search_tool", "load"]), \
              patch("search_engine.indexer.Indexer") as MockIdx:
             mock_instance = MagicMock()
@@ -274,7 +267,6 @@ class TestMain:
             assert exc_info.value.code == 1
 
     def test_main_keyboard_interrupt_exits_cleanly(self, capsys):
-        """A KeyboardInterrupt should print a message and exit 0."""
         with patch("sys.argv", ["search_tool", "find", "love"]), \
              patch("search_engine.indexer.Indexer") as MockIdx, \
              patch("search_engine.searcher.Searcher") as MockSearch:
