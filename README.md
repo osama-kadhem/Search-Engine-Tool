@@ -1,4 +1,4 @@
-# 🕸️ IronMind: High-Performance Search Engine & Inverted Indexer
+# 🕸️ High-Performance Search Engine & Inverted Indexer
 
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![NLTK](https://img.shields.io/badge/NLTK-3.8-154F5B?style=for-the-badge)](https://www.nltk.org/)
