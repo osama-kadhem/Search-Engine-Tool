@@ -7,15 +7,6 @@
 #   python main.py print [--index data/index.json]
 #   python main.py find  <query> [--index data/index.json] [--top-n 10]
 
-# Just mention/explain build, then run these live:
-#python3 main.py load
-#python3 main.py print
-#python3 main.py find "love life"
-#python3 main.py find "the is and"
-#python3 main.py find "xylophone123"
-
-#python3 -m pytest --cov=search_engine --cov-report=term-missing
-
 
 
 
@@ -40,11 +31,13 @@ def cmd_build(args):
     from search_engine.crawler import Crawler
     from search_engine.indexer import Indexer
 
+    # Start the crawling process
     logger.info("Starting crawl from: %s", args.start_url)
-    crawler = Crawler(base_url=args.start_url)
+    crawler = Crawler(base_url=args.start_url, max_pages=30)
     pages = crawler.crawl()
     logger.info("Crawl complete — %d pages collected.", len(pages))
 
+    # Build the index from the crawled pages
     indexer = Indexer()
     indexer.build(pages)
     indexer.save(args.output)
@@ -55,6 +48,7 @@ def cmd_load(args):
     """Load a previously saved index and confirm it worked."""
     from search_engine.indexer import Indexer
 
+    # Create a fresh indexer and load data from the file
     indexer = Indexer()
     indexer.load(args.index)
     print(f"Index loaded from '{args.index}'.")
@@ -79,12 +73,15 @@ def cmd_find(args):
     indexer = Indexer()
     indexer.load(args.index)
 
+    # Pass the query to the searcher to get ranked documents
     results = Searcher(indexer).find(args.query, top_n=args.top_n)
 
+    # Handle the case where no matching words were found
     if not results:
         print("No results found.")
         return
 
+    # Loop through the results and print them nicely
     for rank, doc in enumerate(results, start=1):
         print(f"\n[{rank}] {doc.get('title', '(no title)')}")
         print(f"    URL   : {doc.get('url', '')}")
@@ -142,12 +139,15 @@ def build_parser():
 
 
 def main():
+    # Create the parser and handle the user's input
     parser = build_parser()
     args = parser.parse_args()
 
+    # Enable debug mode if the user requested it
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
 
+    # Run the appropriate command function
     try:
         args.func(args)
     except FileNotFoundError as exc:

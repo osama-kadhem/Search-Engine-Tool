@@ -8,27 +8,28 @@ from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
+from typing import List, Dict, Optional, Any, Set
 
 logger = logging.getLogger(__name__)
 
-BASE_URL = "https://quotes.toscrape.com"
-CRAWL_DELAY = 6  # seconds — required by the coursework brief
+BASE_URL: str = "https://quotes.toscrape.com"
+CRAWL_DELAY: int = 6  # seconds — required by the coursework brief
 
 
 class Crawler:
     """Crawls quotes.toscrape.com and returns a list of page dicts."""
 
-    def __init__(self, base_url=BASE_URL, delay=CRAWL_DELAY, max_pages=None):
+    def __init__(self, base_url: str = BASE_URL, delay: int = CRAWL_DELAY, max_pages: Optional[int] = None) -> None:
         self.base_url = base_url
         self.delay = delay
         self.max_pages = max_pages  # useful during testing to avoid long crawls
-        self._visited = set()
+        self._visited: Set[str] = set()
         self._session = requests.Session()
         self._session.headers.update(
             {"User-Agent": "COMP3011-SearchEngine/1.0 (educational project)"}
         )
 
-    def crawl(self, start_url=None):
+    def crawl(self, start_url: Optional[str] = None) -> List[Dict[str, Any]]:
         """
         Crawl from start_url and return all collected pages.
         Each page is a dict: url, title, quotes, authors, tags.
@@ -72,7 +73,7 @@ class Crawler:
 
         return pages
 
-    def _fetch_and_parse(self, url):
+    def _fetch_and_parse(self, url: str) -> Optional[Dict[str, Any]]:
         """Fetch one page and return its data, or None if the request fails."""
         try:
             response = self._session.get(url, timeout=10)
@@ -91,21 +92,21 @@ class Crawler:
             "_links": self._parse_links(soup, url),
         }
 
-    def _parse_title(self, soup):
+    def _parse_title(self, soup: BeautifulSoup) -> str:
         tag = soup.find("title")
         return tag.get_text(strip=True) if tag else ""
 
-    def _parse_quotes(self, soup):
+    def _parse_quotes(self, soup: BeautifulSoup) -> List[str]:
         return [q.get_text(strip=True) for q in soup.select("span.text")]
 
-    def _parse_authors(self, soup):
+    def _parse_authors(self, soup: BeautifulSoup) -> List[str]:
         return [a.get_text(strip=True) for a in soup.select("small.author")]
 
-    def _parse_tags(self, soup):
+    def _parse_tags(self, soup: BeautifulSoup) -> List[str]:
         # Use a set first to remove duplicate tags, then convert back to list
         return list({t.get_text(strip=True) for t in soup.select("a.tag")})
 
-    def _parse_links(self, soup, current_url):
+    def _parse_links(self, soup: BeautifulSoup, current_url: str) -> List[str]:
         """Return all internal links found on the page as absolute URLs."""
         links = []
         for a in soup.find_all("a", href=True):
@@ -114,13 +115,13 @@ class Crawler:
                 links.append(abs_url)
         return links
 
-    def _is_internal(self, url):
+    def _is_internal(self, url: str) -> bool:
         """Return True if the URL belongs to the same domain we started from."""
         target_host = urlparse(self.base_url).netloc
         return urlparse(url).netloc == target_host
 
     @staticmethod
-    def _normalise(url):
+    def _normalise(url: str) -> str:
         """Remove trailing slashes and fragments so we don't visit the same page twice."""
         parsed = urlparse(url)
         return parsed._replace(fragment="").geturl().rstrip("/")

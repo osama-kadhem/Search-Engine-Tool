@@ -3,6 +3,8 @@
 import math
 import logging
 
+from typing import List, Dict, Any
+
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
@@ -17,16 +19,16 @@ stemmer = PorterStemmer()
 class Searcher:
     """Searches a built Indexer and returns ranked results."""
 
-    def __init__(self, indexer):
+    def __init__(self, indexer: 'Indexer') -> None:
         self.indexer = indexer
 
         # Sum up how many tokens each document contains.
         # We do this once here so the find() loop doesn't re-scan on every query.
-        self._doc_lengths = {}
+        self._doc_lengths: Dict[int, int] = {}
         for (doc_id, _), count in indexer.term_freq.items():
             self._doc_lengths[doc_id] = self._doc_lengths.get(doc_id, 0) + count
 
-    def find(self, query, top_n=10):
+    def find(self, query: str, top_n: int = 10) -> List[Dict[str, Any]]:
         """Return the top N documents for the query, ranked by TF-IDF score."""
         query_tokens = self._preprocess(query)
 
@@ -66,7 +68,7 @@ class Searcher:
 
         return results
 
-    def print_all(self):
+    def print_all(self) -> None:
         """Print every document in the index as a simple table."""
         docs = self.indexer.documents
 
@@ -79,7 +81,7 @@ class Searcher:
         for doc_id, doc in sorted(docs.items()):
             print(f"{doc_id:<5} {doc.title[:40]:<40} {doc.url}")
 
-    def _preprocess(self, text):
+    def _preprocess(self, text: str) -> List[str]:
         """Apply the same cleaning pipeline as the indexer."""
         tokens = word_tokenize(text.lower())
         return [
@@ -88,7 +90,7 @@ class Searcher:
             if w.isalpha() and w not in STOP_WORDS
         ]
 
-    def _snippet(self, doc, query_tokens, window=10):
+    def _snippet(self, doc: Any, query_tokens: List[str], window: int = 10) -> str:
         """
         Find the first query word in the document and return the words around it.
         Falls back to the opening words if nothing matches.

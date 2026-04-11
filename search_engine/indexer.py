@@ -11,7 +11,7 @@ import json
 import os
 import logging
 from dataclasses import dataclass, asdict
-from typing import List
+from typing import List, Dict, Any, Tuple
 
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -34,7 +34,7 @@ class Document:
     authors: List[str]
     tags: List[str]
 
-    def full_text(self):
+    def full_text(self) -> str:
         """Return all text fields joined into a single string."""
         parts = [self.title] + self.quotes + self.authors + self.tags
         return " ".join(parts)
@@ -43,12 +43,12 @@ class Document:
 class Indexer:
     """Builds and stores an inverted index from crawled page data."""
 
-    def __init__(self):
-        self.documents = {}   # doc_id → Document
-        self.index = {}       # token  → list of doc_ids
-        self.term_freq = {}   # (doc_id, token) → count  (used for TF-IDF scoring)
+    def __init__(self) -> None:
+        self.documents: Dict[int, Document] = {}   # doc_id → Document
+        self.index: Dict[str, List[int]] = {}       # token  → list of doc_ids
+        self.term_freq: Dict[Tuple[int, str], int] = {}   # (doc_id, token) → count  (used for TF-IDF scoring)
 
-    def build(self, pages):
+    def build(self, pages: List[Dict[str, Any]]) -> None:
         """Build the index from a list of page dicts returned by the Crawler."""
         logger.info("Building index from %d pages...", len(pages))
 
@@ -78,7 +78,7 @@ class Indexer:
             len(self.documents), len(self.index),
         )
 
-    def save(self, path):
+    def save(self, path: str) -> None:
         """Write the index to a JSON file, creating directories if needed."""
         os.makedirs(os.path.dirname(path), exist_ok=True)
 
@@ -99,7 +99,7 @@ class Indexer:
 
         logger.info("Index saved to %s", path)
 
-    def load(self, path):
+    def load(self, path: str) -> None:
         """Load a previously saved index from disk."""
         if not os.path.exists(path):
             raise FileNotFoundError(f"No index file at '{path}'. Run 'build' first.")
@@ -130,7 +130,7 @@ class Indexer:
             path, len(self.documents), len(self.index),
         )
 
-    def _preprocess(self, text):
+    def _preprocess(self, text: str) -> List[str]:
         """Lowercase, tokenise, remove stop words, and stem."""
         tokens = word_tokenize(text.lower())
         return [
