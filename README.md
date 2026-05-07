@@ -125,4 +125,4 @@ This assessment falls under the "Green" category. GenAI was fundamentally used a
 However, critical implementation specifics—such as manually fixing `Crawler` to gracefully handle trailing slash URL duplications, managing the pre-calculation of document lengths to escape \( O(N) \) rendering slowdowns, and fully fixing the `FileNotFound` unhandled exception loop—were driven entirely by me. Delegating standard boilerplate to AI drastically allowed me to redirect my focus toward mastering advanced algorithmic complexities like TF-IDF math and Big-O efficiency ratios, providing a superior learning experience.
 
 ---
-*© 2026 IronMind Search Engine · Designed exclusively for COM3011 Web Services*
+*© 2026 Search Engine · Designed exclusively for COM3011 Web Services*
