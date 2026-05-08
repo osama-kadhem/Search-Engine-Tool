@@ -9,6 +9,8 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
+from search_engine.indexer import Indexer
+
 logger = logging.getLogger(__name__)
 
 # Same settings as the indexer — must match or scores will be wrong
@@ -19,7 +21,7 @@ stemmer = PorterStemmer()
 class Searcher:
     """Searches a built Indexer and returns ranked results."""
 
-    def __init__(self, indexer: 'Indexer') -> None:
+    def __init__(self, indexer: Indexer) -> None:
         self.indexer = indexer
 
         # Sum up how many tokens each document contains.
