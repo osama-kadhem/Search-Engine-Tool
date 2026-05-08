@@ -33,7 +33,7 @@ def cmd_build(args):
 
     # Start the crawling process
     logger.info("Starting crawl from: %s", args.start_url)
-    crawler = Crawler(base_url=args.start_url, max_pages=30)
+    crawler = Crawler(base_url=args.start_url, max_pages=100)
     pages = crawler.crawl()
     logger.info("Crawl complete — %d pages collected.", len(pages))
 
