@@ -1,11 +1,11 @@
-# 🕸️ High-Performance Search Engine & Inverted Indexer
+# 🕸️ COMP3011 Search Engine — High-Performance Inverted Indexer
 
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![NLTK](https://img.shields.io/badge/NLTK-3.8-154F5B?style=for-the-badge)](https://www.nltk.org/)
 [![BeautifulSoup](https://img.shields.io/badge/BeautifulSoup-4.12-2C3E50?style=for-the-badge)](https://www.crummy.com/software/BeautifulSoup/)
 [![Pytest](https://img.shields.io/badge/Pytest-100%25_Coverage-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/en/stable/)
 
-> **IronMind Search Engine** is a professional-grade command-line search tool built for the COMP3011 Web Services module. It systematically crawls **quotes.toscrape.com**, processes text through an advanced NLP linguistics pipeline, and delivers rapid query results using a pre-calculated **TF-IDF Algorithm** mapped to an **O(1) Inverted Index**.
+> This search engine is a professional-grade command-line search tool built for the COMP3011 Web Services module. It systematically crawls **quotes.toscrape.com**, processes text through an advanced NLP linguistics pipeline, and delivers rapid query results using a pre-calculated **TF-IDF Algorithm** mapped to an **O(1) Inverted Index**.
 
 ---
 
@@ -72,9 +72,9 @@ The codebase achieves **100% total coverage** across all modules. Rather than pi
 ## 📊 Core Science Concepts
 
 ### Inverse Document Frequency (TF-IDF)
-IronMind scores documents by assessing term relevance, balancing the raw frequency of a word in a specific page (Term Frequency) against its rarity across the entire database (Inverse Document Frequency).
+The search engine scores documents by assessing term relevance, balancing the raw frequency of a word in a specific page (Term Frequency) against its rarity across the entire database (Inverse Document Frequency).
 *   **The Problem with Raw TF**: A massive page matching the word "life" 50 times isn't necessarily more relevant than a highly specific, quote-packed small page matching it 5 times.
-*   **The IronMind Fix**: The output relies heavily on dividing `TF` cleanly against pre-calculated document lengths. This guarantees fair mathematical representation across vastly different page sizes. Dynamic 10-word code-snippets are then extracted around the initial raw hit.
+*   **The Fix**: The output relies heavily on dividing `TF` cleanly against pre-calculated document lengths. This guarantees fair mathematical representation across vastly different page sizes. Dynamic 10-word code-snippets are then extracted around the initial raw hit.
 
 ---
 
@@ -117,12 +117,11 @@ python3 -m pytest --cov=search_engine --cov-report=term-missing
 
 | Tool | Used For | How Verified / What I Changed |
 | :--- | :--- | :--- |
-| **Claude 3.5 Sonnet** (Anthropic) | Initial scaffolding; test generation; parser implementation | All code evaluated against the brief constraints. Manually replaced the AI's suggested `lxml` parser with Python's built-in `html.parser` to reduce unnecessary external dependencies. |
+| **Microsoft Copilot** (University Secure Access) | Initial scaffolding; test generation; parser implementation | All code evaluated against the brief constraints. Manually replaced the AI's suggested `lxml` parser with Python's built-in `html.parser` to reduce unnecessary external dependencies. |
 
-**Critical Evaluation:**
-This assessment falls under the "Green" category. GenAI was fundamentally used as an integrative programming partner. Claude successfully wrote heavy Python boilerplate (like the `argparse` configuration block) and provided vast structural scaffolding for `unittest.mock`. 
+> ⚠️ *To ensure privacy and data security, please use only the University's secure Copilot access when engaging with AI tools.*
 
 However, critical implementation specifics—such as manually fixing `Crawler` to gracefully handle trailing slash URL duplications, managing the pre-calculation of document lengths to escape \( O(N) \) rendering slowdowns, and fully fixing the `FileNotFound` unhandled exception loop—were driven entirely by me. Delegating standard boilerplate to AI drastically allowed me to redirect my focus toward mastering advanced algorithmic complexities like TF-IDF math and Big-O efficiency ratios, providing a superior learning experience.
 
 ---
-*© 2026 Search Engine · Designed exclusively for COM3011 Web Services*
+*© 2026 COMP3011 Search Engine · Designed exclusively for COM3011 Web Services*

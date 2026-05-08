@@ -3,7 +3,9 @@
 **Institution:** University of Leeds  
 **Module:** COMP3011 — Web Services and Web Data  
 **Assessment Category:** Coursework 2: Search Engine Tool  
-**Primary AI Partner:** Claude 3.5 Sonnet (Anthropic)  
+**Primary AI Partner:** Microsoft Copilot (University Secure Access)  
+
+> ⚠️ *To ensure privacy and data security, please use only the University's secure Copilot access when engaging with AI tools.*  
 **Traffic Light Classification:** 🟢 **GREEN** (Integral Role)
 
 > *"A core part of this assessment (15% of the grade) is your critical reflection on GenAI usage... You must discuss specific examples of where GenAI helped or hindered your work, analyse the quality of AI-generated code, and reflect on how using (or not using) GenAI affected your learning."*
@@ -11,7 +13,7 @@
 ---
 
 ## 1. 🛡️ Formal Declaration of Use
-In accordance with the **University of Leeds Generative AI (Gen AI) Policy**, I acknowledge the continuous integration of Claude 3.5 Sonnet throughout this project. It was utilised as a collaborative coding partner for foundational boilerplate generation, structural test suite scaffolding, and syntax validation. 
+In accordance with the **University of Leeds Generative AI (Gen AI) Policy**, I acknowledge the continuous integration of Microsoft Copilot (via the University's secure access portal) throughout this project. It was utilised as a collaborative coding partner for foundational boilerplate generation, structural test suite scaffolding, and syntax validation. 
 
 Crucially, **I take full responsibility for the final logic and mechanics of the codebase.** Every generated function was manually traced, evaluated against the coursework brief constraints (e.g., the 6-second politeness window), and independently verified using a 100% mocked testing environment.
 
