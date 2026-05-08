@@ -5,7 +5,7 @@
 [![BeautifulSoup](https://img.shields.io/badge/BeautifulSoup-4.12-2C3E50?style=for-the-badge)](https://www.crummy.com/software/BeautifulSoup/)
 [![Pytest](https://img.shields.io/badge/Pytest-100%25_Coverage-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](https://docs.pytest.org/en/stable/)
 
-> **IronMind Search Engine** is a professional-grade command-line search tool built for the COMP3011 Web Services module. It systematically crawls **quotes.toscrape.com**, processes text through an advanced NLP linguistics pipeline, and delivers rapid query results using a pre-calculated **TF-IDF Algorithm** mapped to an **O(1) Inverted Index**.
+> **Search Engine** is a professional-grade command-line search tool built for the COMP3011 Web Services module. It systematically crawls **quotes.toscrape.com**, processes text through an advanced NLP linguistics pipeline, and delivers rapid query results using a pre-calculated **TF-IDF Algorithm** mapped to an **O(1) Inverted Index**.
 
 ---
 
